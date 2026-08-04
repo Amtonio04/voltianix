@@ -20,17 +20,17 @@ const {
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Preconnect to font CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://tile.openstreetmap.org" />
 
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-gray-50 font-sans antialiased">
+  <body class="min-h-screen bg-white font-sans antialiased">
     <slot />
   </body>
 </html>
@@ -38,49 +38,80 @@ const {
 <style is:global>
   @import "tailwindcss";
 
-  /* ── Design Tokens ── */
+  /* ── Design Tokens (Baseline) ── */
   :root {
-    --color-primary: #10B981;
-    --color-primary-hover: #059669;
-    --color-accent: #3B82F6;
-    --color-accent-hover: #2563EB;
-    --color-warning: #F59E0B;
-    --color-danger: #EF4444;
+    /* Colores globales */
+    --color-text: #1E1E1E;
+    --color-accent: #16A34A;
+    --color-button: #2563EB;
+    --color-secondary: #616161;
     --color-surface: #FFFFFF;
-    --color-bg: #F9FAFB;
-    --color-text: #111827;
-    --color-text-secondary: #6B7280;
-    --color-border: #E5E7EB;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Estados operativos */
+    --status-en-ruta: #45BC75;
+    --status-cargando: #6155F5;
+    --status-mantenimiento: #F17F1B;
+    --status-alerta: #F53131;
+
+    /* Batería */
+    --battery-high: #45BC75;
+    --battery-medium: #F5C731;
+    --battery-low: #F53131;
+
+    /* General */
+    --color-border: #E6E6E6;
+    --font-sans: 'Poppins', system-ui, -apple-system, sans-serif;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     font-family: var(--font-sans);
     color: var(--color-text);
-    background-color: var(--color-bg);
+    background-color: var(--color-surface);
     margin: 0;
     padding: 0;
   }
 
-  /* ── Scrollbar styling ── */
-  ::-webkit-scrollbar {
-    width: 5px;
+  a { text-decoration: none; }
+
+  /* ── Animations ── */
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes batteryFill {
+    from { transform: scaleX(0); transform-origin: left; }
+    to { transform: scaleX(1); transform-origin: left; }
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  .animate-slide-in-left { animation: slideInLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .animate-fade-in { animation: fadeIn 0.2s ease both; }
+  .animate-battery-fill { animation: batteryFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
 
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
+  /* ── Leaflet overrides ── */
+  .leaflet-container { font-family: var(--font-sans) !important; }
+  .leaflet-control-attribution {
+    font-size: 10px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    padding: 2px 6px !important;
   }
+  .leaflet-control-attribution a { color: var(--color-secondary) !important; }
+  .leaflet-control-zoom { display: none !important; }
+  .leaflet-marker-icon { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.25);
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-slide-in-left, .animate-fade-in, .animate-battery-fill { animation: none !important; }
+    .leaflet-marker-icon { transition: none !important; }
   }
 </style>
