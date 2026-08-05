@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { Vehicle, VehicleStatus, VehicleType, BatteryLevel } from '../../types/vehicle';
-import { getBatteryLevel } from '../../types/vehicle';
+import type { Vehicle, ColorCategory } from '../../types/vehicle';
+import { getVehicleColor } from '../../types/vehicle';
 import { mockVehicles } from '../../data/mock/vehicles';
 import VehicleMarkerComponent from './VehicleMarker';
 import SearchBar from '../dashboard/SearchBar';
@@ -67,57 +67,23 @@ export default function FleetMap() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showFilters, setShowFilters] = useState(true);
 
-  const [statusFilters, setStatusFilters] = useState<Record<VehicleStatus, boolean>>({
-    'en-ruta': true,
-    'cargando': true,
-    'mantenimiento': true,
-  });
-  const [batteryFilters, setBatteryFilters] = useState<Record<BatteryLevel, boolean>>({
-    high: true,
-    medium: true,
-    low: true,
-  });
-  const [typeFilters, setTypeFilters] = useState<Record<VehicleType, boolean>>({
-    automovil: true,
-    van: true,
-    camion: true,
-    motocicleta: true,
-  });
+  // Active color category: 'status' | 'battery' | 'type' | null (null = gray)
+  const [activeCategory, setActiveCategory] = useState<ColorCategory>(null);
 
-  // ── Filtering ──
+  // ── Filtering (search only; colors are driven by activeCategory) ──
   const filteredVehicles = useMemo(() => {
-    return mockVehicles.filter((v) => {
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const matches =
-          v.label.toLowerCase().includes(q) ||
-          v.driver.toLowerCase().includes(q) ||
-          v.model.toLowerCase().includes(q);
-        if (!matches) return false;
-      }
-      if (!statusFilters[v.status]) return false;
-      if (!batteryFilters[getBatteryLevel(v.battery)]) return false;
-      if (!typeFilters[v.type]) return false;
-      return true;
-    });
-  }, [searchQuery, statusFilters, batteryFilters, typeFilters]);
+    if (!searchQuery) return mockVehicles;
+    const q = searchQuery.toLowerCase();
+    return mockVehicles.filter((v) =>
+      v.label.toLowerCase().includes(q) ||
+      v.driver.toLowerCase().includes(q) ||
+      v.model.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
-  const activeCount = filteredVehicles.length;
   const totalCount = mockVehicles.length;
 
   // ── Handlers ──
-  const handleStatusChange = useCallback((status: VehicleStatus) => {
-    setStatusFilters((prev) => ({ ...prev, [status]: !prev[status] }));
-  }, []);
-
-  const handleBatteryChange = useCallback((level: BatteryLevel) => {
-    setBatteryFilters((prev) => ({ ...prev, [level]: !prev[level] }));
-  }, []);
-
-  const handleTypeChange = useCallback((type: VehicleType) => {
-    setTypeFilters((prev) => ({ ...prev, [type]: !prev[type] }));
-  }, []);
-
   const handleMarkerClick = useCallback((vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
   }, []);
@@ -156,6 +122,7 @@ export default function FleetMap() {
           <VehicleMarkerComponent
             key={vehicle.id}
             vehicle={vehicle}
+            color={getVehicleColor(vehicle, activeCategory)}
             isSelected={selectedVehicle?.id === vehicle.id}
             onClick={handleMarkerClick}
           />
@@ -172,21 +139,17 @@ export default function FleetMap() {
       </MapContainer>
 
       {/* ── Left sidebar: Search + Filters ── */}
-      <div className="absolute top-4 left-4 z-[1000] flex flex-col gap-3 max-h-[calc(100%-2rem)] overflow-y-auto">
+      <div className="absolute top-4 left-4 z-[1000] flex flex-col gap-3">
         <SearchBar value={searchQuery} onChange={setSearchQuery} onMenuToggle={toggleFilters} />
 
         {showFilters && (
-          <FilterPanel
-            activeCount={activeCount}
-            totalCount={totalCount}
-            vehicles={mockVehicles}
-            statusFilters={statusFilters}
-            batteryFilters={batteryFilters}
-            typeFilters={typeFilters}
-            onStatusChange={handleStatusChange}
-            onBatteryChange={handleBatteryChange}
-            onTypeChange={handleTypeChange}
-          />
+          <div className="max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain pr-1">
+            <FilterPanel
+              vehicles={mockVehicles}
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+            />
+          </div>
         )}
       </div>
 

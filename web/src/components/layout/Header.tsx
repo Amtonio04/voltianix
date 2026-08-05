@@ -9,11 +9,11 @@ export default function Header({ currentPage = 'mapa' }: HeaderProps) {
       style={{ borderBottom: '1px solid #E6E6E6' }}
     >
       {/* Left side: Logo */}
-      <div className="flex items-center gap-2 w-48">
+      <div className="flex items-center w-52 min-w-[160px]">
         <img
           src="/logo.png"
           alt="Voltianix"
-          className="h-9 w-auto object-contain"
+          className="h-10 w-auto object-contain drop-shadow-sm"
         />
       </div>
 

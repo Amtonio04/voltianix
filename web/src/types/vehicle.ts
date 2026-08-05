@@ -63,3 +63,27 @@ export function getBatteryColor(level: BatteryLevel): string {
   };
   return colors[level];
 }
+
+/** Type colors */
+export function getTypeColor(type: VehicleType): string {
+  const colors: Record<VehicleType, string> = {
+    automovil: '#6155F5',
+    van: '#45BC75',
+    camion: '#F17F1B',
+    motocicleta: '#F5C731',
+  };
+  return colors[type];
+}
+
+/** Active color category for markers */
+export type ColorCategory = 'status' | 'battery' | 'type' | null;
+
+/** Returns the marker color for a vehicle based on the active category */
+export function getVehicleColor(vehicle: Vehicle, category: ColorCategory): string {
+  if (!category) return '#AFAFAF';
+  switch (category) {
+    case 'status': return getStatusColor(vehicle.status);
+    case 'battery': return getBatteryColor(getBatteryLevel(vehicle.battery));
+    case 'type': return getTypeColor(vehicle.type);
+  }
+}

@@ -1,16 +1,15 @@
 import { Marker } from 'react-leaflet';
 import L from 'leaflet';
 import type { Vehicle } from '../../types/vehicle';
-import { getStatusColor } from '../../types/vehicle';
 
 interface VehicleMarkerProps {
   vehicle: Vehicle;
+  color: string;
   isSelected: boolean;
   onClick: (vehicle: Vehicle) => void;
 }
 
-function createMarkerIcon(vehicle: Vehicle, isSelected: boolean) {
-  const color = getStatusColor(vehicle.status);
+function createMarkerIcon(vehicle: Vehicle, color: string, isSelected: boolean) {
   const scale = isSelected ? 1.1 : 1;
 
   return L.divIcon({
@@ -38,6 +37,7 @@ function createMarkerIcon(vehicle: Vehicle, isSelected: boolean) {
           box-shadow: 0 2px 8px ${color}40;
           border: 2px solid rgba(255, 255, 255, 0.9);
           letter-spacing: 0.02em;
+          transition: background 0.3s ease, box-shadow 0.3s ease;
         ">
           ${vehicle.label}
         </div>
@@ -48,6 +48,7 @@ function createMarkerIcon(vehicle: Vehicle, isSelected: boolean) {
           border-right: 6px solid transparent;
           border-top: 6px solid ${color};
           margin: -1px auto 0;
+          transition: border-top-color 0.3s ease;
         "></div>
       </div>
     `,
@@ -57,11 +58,11 @@ function createMarkerIcon(vehicle: Vehicle, isSelected: boolean) {
   });
 }
 
-export default function VehicleMarker({ vehicle, isSelected, onClick }: VehicleMarkerProps) {
+export default function VehicleMarker({ vehicle, color, isSelected, onClick }: VehicleMarkerProps) {
   return (
     <Marker
       position={[vehicle.location.lat, vehicle.location.lng]}
-      icon={createMarkerIcon(vehicle, isSelected)}
+      icon={createMarkerIcon(vehicle, color, isSelected)}
       eventHandlers={{
         click: () => onClick(vehicle),
       }}
