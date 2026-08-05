@@ -44,7 +44,7 @@ export function getTypeLabel(type: VehicleType): string {
   return labels[type];
 }
 
-/** Baseline status colors */
+/* Colores base de estado */
 export function getStatusColor(status: VehicleStatus): string {
   const colors: Record<VehicleStatus, string> = {
     'en-ruta': '#45BC75',
@@ -54,7 +54,7 @@ export function getStatusColor(status: VehicleStatus): string {
   return colors[status];
 }
 
-/** Baseline battery colors */
+/* Colores base de batería */
 export function getBatteryColor(level: BatteryLevel): string {
   const colors: Record<BatteryLevel, string> = {
     high: '#45BC75',
@@ -64,7 +64,7 @@ export function getBatteryColor(level: BatteryLevel): string {
   return colors[level];
 }
 
-/** Type colors */
+/* Colores por tipo de unidad */
 export function getTypeColor(type: VehicleType): string {
   const colors: Record<VehicleType, string> = {
     automovil: '#6155F5',
@@ -75,10 +75,10 @@ export function getTypeColor(type: VehicleType): string {
   return colors[type];
 }
 
-/** Active color category for markers */
+/* Categoría de color activa para los marcadores */
 export type ColorCategory = 'status' | 'battery' | 'type' | null;
 
-/** Returns the marker color for a vehicle based on the active category */
+/* Devuelve el color del marcador de un vehículo según la categoría activa */
 export function getVehicleColor(vehicle: Vehicle, category: ColorCategory): string {
   if (!category) return '#AFAFAF';
   switch (category) {

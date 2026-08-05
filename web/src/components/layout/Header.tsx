@@ -8,7 +8,7 @@ export default function Header({ currentPage = 'mapa' }: HeaderProps) {
       className="fixed top-0 left-0 right-0 w-full h-14 z-50 px-6 flex items-center justify-between bg-white"
       style={{ borderBottom: '1px solid #E6E6E6' }}
     >
-      {/* Left side: Logo */}
+      {/* Lado izquierdo: Logo */}
       <div className="flex items-center w-52 min-w-[160px]">
         <img
           src="/logo.png"
@@ -17,7 +17,7 @@ export default function Header({ currentPage = 'mapa' }: HeaderProps) {
         />
       </div>
 
-      {/* Center: Navigation Links */}
+      {/* Centro: Enlaces de navegación */}
       <nav className="flex items-center gap-6 h-full">
         <a
           href="/"
@@ -43,7 +43,7 @@ export default function Header({ currentPage = 'mapa' }: HeaderProps) {
         </a>
       </nav>
 
-      {/* Right side: User Profile */}
+      {/* Lado derecho: Perfil de usuario */}
       <div className="flex items-center gap-2.5 w-48 justify-end">
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-[11px] tracking-wide"

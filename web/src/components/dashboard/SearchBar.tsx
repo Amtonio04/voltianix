@@ -7,7 +7,7 @@ interface SearchBarProps {
 export default function SearchBar({ value, onChange, onMenuToggle }: SearchBarProps) {
   return (
     <div className="w-72 bg-white rounded-lg shadow-sm flex items-center" style={{ border: '1px solid #E6E6E6' }}>
-      {/* Hamburger menu */}
+      {/* Botón de menú */}
       <button
         onClick={onMenuToggle}
         className="shrink-0 w-10 h-10 flex items-center justify-center transition-colors cursor-pointer hover:bg-gray-50 rounded-l-lg"
@@ -19,7 +19,7 @@ export default function SearchBar({ value, onChange, onMenuToggle }: SearchBarPr
         </svg>
       </button>
 
-      {/* Input */}
+      {/* Campo de entrada */}
       <input
         type="text"
         placeholder="Buscar Unidad"
@@ -30,7 +30,7 @@ export default function SearchBar({ value, onChange, onMenuToggle }: SearchBarPr
         aria-label="Buscar unidad de la flota"
       />
 
-      {/* Search icon */}
+      {/* Icono de búsqueda */}
       <div className="shrink-0 w-10 h-10 flex items-center justify-center" style={{ color: '#616161' }}>
         <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

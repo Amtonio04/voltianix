@@ -34,7 +34,7 @@ export default function FilterPanel({
 }: FilterPanelProps) {
   const totalCount = vehicles.length;
 
-  // Counts
+  // Conteos
   const statusCounts = useMemo(() => {
     const c: Record<VehicleStatus, number> = { 'en-ruta': 0, 'cargando': 0, 'mantenimiento': 0 };
     vehicles.forEach(v => c[v.status]++);
@@ -128,7 +128,7 @@ export default function FilterPanel({
   );
 }
 
-/* ── Section header (clickable to activate category) ── */
+/* Encabezado de sección (clic para activar la categoría) */
 
 function CategorySection({
   title,
@@ -169,7 +169,7 @@ function CategorySection({
   );
 }
 
-/* ── Filter row: shows colored dot + label + count ── */
+/* Fila de filtro: muestra punto de color + etiqueta + conteo */
 
 function FilterRow({
   label,
@@ -206,7 +206,7 @@ function FilterRow({
   );
 }
 
-/* ── Checkbox icon for section header ── */
+/* Icono de checkbox para el encabezado de sección */
 
 function CheckboxIcon({ checked }: { checked: boolean }) {
   if (checked) {

@@ -16,7 +16,7 @@ export default function VehicleCard({ vehicle, onClose, onViewDetails }: Vehicle
       className="w-80 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col animate-fade-in"
       style={{ border: '1px solid #E6E6E6' }}
     >
-      {/* Header */}
+      {/* Encabezado */}
       <div className="px-4 py-3 relative" style={{ borderBottom: '1px solid #E6E6E6' }}>
         <button
           onClick={onClose}
@@ -33,7 +33,7 @@ export default function VehicleCard({ vehicle, onClose, onViewDetails }: Vehicle
         </h3>
       </div>
 
-      {/* Info Rows */}
+      {/* Filas de información */}
       <div className="px-4 py-3 flex flex-col gap-2.5">
         {/* Usuario */}
         <InfoRow icon={<UserIcon />} label="Usuario" value={vehicle.driver} />
@@ -69,7 +69,7 @@ export default function VehicleCard({ vehicle, onClose, onViewDetails }: Vehicle
         <InfoRow icon={<ClockIcon />} label="Actualizado hace" value={vehicle.lastUpdate} />
       </div>
 
-      {/* Footer */}
+      {/* Pie de página */}
       <div className="px-4 pb-4 pt-1">
         <button
           onClick={() => onViewDetails(vehicle.id)}
@@ -83,7 +83,7 @@ export default function VehicleCard({ vehicle, onClose, onViewDetails }: Vehicle
   );
 }
 
-/* ── Helper ── */
+/* Componente auxiliar */
 
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -97,7 +97,7 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
   );
 }
 
-/* ── Icons ── */
+/* Iconos */
 
 function UserIcon() {
   return (

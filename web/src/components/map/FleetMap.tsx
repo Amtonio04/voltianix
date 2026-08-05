@@ -9,20 +9,20 @@ import SearchBar from '../dashboard/SearchBar';
 import FilterPanel from '../dashboard/FilterPanel';
 import VehicleCard from '../vehicle/VehicleCard';
 
-/** Fly to a vehicle when selected */
+/* Vuela hacia un vehículo cuando se selecciona */
 function FlyToVehicle({ lat, lng }: { lat: number; lng: number }) {
   const map = useMap();
   map.flyTo([lat, lng], 15, { duration: 0.8 });
   return null;
 }
 
-/** Custom zoom controls */
+/* Controles de zoom personalizados */
 function ZoomControls() {
   const map = useMap();
 
   return (
     <div className="absolute bottom-6 right-4 z-[1000] flex flex-col gap-1 animate-fade-in">
-      {/* Locate button */}
+      {/* Botón de ubicación */}
       <button
         className="w-9 h-9 rounded-lg bg-white flex items-center justify-center transition-colors cursor-pointer hover:bg-gray-50"
         style={{ border: '1px solid #E6E6E6', color: '#616161' }}
@@ -62,15 +62,15 @@ function ZoomControls() {
 }
 
 export default function FleetMap() {
-  // ── State ──
+  // Estado
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showFilters, setShowFilters] = useState(true);
 
-  // Active color category: 'status' | 'battery' | 'type' | null (null = gray)
+  // Categoría de color activa: 'status' | 'battery' | 'type' | null (null = gris)
   const [activeCategory, setActiveCategory] = useState<ColorCategory>(null);
 
-  // ── Filtering (search only; colors are driven by activeCategory) ──
+  // Filtrado (solo búsqueda; los colores los define activeCategory)
   const filteredVehicles = useMemo(() => {
     if (!searchQuery) return mockVehicles;
     const q = searchQuery.toLowerCase();
@@ -83,7 +83,7 @@ export default function FleetMap() {
 
   const totalCount = mockVehicles.length;
 
-  // ── Handlers ──
+  // Manejadores
   const handleMarkerClick = useCallback((vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
   }, []);
@@ -93,19 +93,19 @@ export default function FleetMap() {
   }, []);
 
   const handleViewDetails = useCallback((_vehicleId: string) => {
-    // Future: navigate to vehicle detail page
+    // Futuro: navegar a la página de detalle del vehículo
   }, []);
 
   const toggleFilters = useCallback(() => {
     setShowFilters((prev) => !prev);
   }, []);
 
-  // Aguascalientes, Mexico center
+  // Centro de Aguascalientes, México
   const mapCenter: [number, number] = [21.8818, -102.2916];
 
   return (
     <div className="relative w-full h-full">
-      {/* ── Map ── */}
+      {/* Mapa */}
       <MapContainer
         center={mapCenter}
         zoom={13}
@@ -138,7 +138,7 @@ export default function FleetMap() {
         <ZoomControls />
       </MapContainer>
 
-      {/* ── Left sidebar: Search + Filters ── */}
+      {/* Barra lateral izquierda: Búsqueda + Filtros */}
       <div className="absolute top-4 left-4 z-[1000] flex flex-col gap-3">
         <SearchBar value={searchQuery} onChange={setSearchQuery} onMenuToggle={toggleFilters} />
 
@@ -153,7 +153,7 @@ export default function FleetMap() {
         )}
       </div>
 
-      {/* ── Vehicle card: floats on map ── */}
+      {/* Tarjeta del vehículo: flota sobre el mapa */}
       {selectedVehicle && (
         <div className="absolute top-4 left-[320px] z-[1000]">
           <VehicleCard
