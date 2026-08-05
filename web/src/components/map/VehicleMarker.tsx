@@ -42,19 +42,19 @@ function createMarkerIcon(vehicle: Vehicle, color: string, isSelected: boolean) 
           ${vehicle.label}
         </div>
         <div style="
-          width: 0;
-          height: 0;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-          border-top: 6px solid ${color};
-          margin: -1px auto 0;
-          transition: border-top-color 0.3s ease;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: ${color};
+          border: 2px solid rgba(255, 255, 255, 0.9);
+          margin: 3px auto 0;
+          transition: background 0.3s ease, border-color 0.3s ease;
         "></div>
       </div>
     `,
-    iconSize: [76, 40],
-    iconAnchor: [38, 40],
-    popupAnchor: [0, -40],
+    iconSize: [76, 42],
+    iconAnchor: [38, 36],
+    popupAnchor: [0, -36],
   });
 }
 
