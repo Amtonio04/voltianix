@@ -30,5 +30,3 @@ Proporcionar una experiencia visual clara e intuitiva para el monitoreo de flota
 
 ```bash
 npm install
-
-faltaron los puntos de carga? (preguntar eso), intentar adaptar un poco más al diseño de nathan, mejores comentarios?, verificar si la fuente, colores y asi que usó nate son correctos con los que tu hiciste
