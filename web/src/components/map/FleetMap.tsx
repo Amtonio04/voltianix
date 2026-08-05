@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Vehicle, ColorCategory } from '../../types/vehicle';
 import { getVehicleColor } from '../../types/vehicle';
-import { mockVehicles } from '../../data/mock/vehicles';
+import { useVehicles } from '../../hooks/useVehicles';
 import VehicleMarkerComponent from './VehicleMarker';
 import SearchBar from '../dashboard/SearchBar';
 import FilterPanel from '../dashboard/FilterPanel';
@@ -62,6 +62,9 @@ function ZoomControls() {
 }
 
 export default function FleetMap() {
+  // Datos: mock o Firebase según MOCK_DATA
+  const vehicles = useVehicles();
+
   // Estado
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -72,16 +75,16 @@ export default function FleetMap() {
 
   // Filtrado (solo búsqueda; los colores los define activeCategory)
   const filteredVehicles = useMemo(() => {
-    if (!searchQuery) return mockVehicles;
+    if (!searchQuery) return vehicles;
     const q = searchQuery.toLowerCase();
-    return mockVehicles.filter((v) =>
+    return vehicles.filter((v) =>
       v.label.toLowerCase().includes(q) ||
       v.driver.toLowerCase().includes(q) ||
       v.model.toLowerCase().includes(q)
     );
-  }, [searchQuery]);
+  }, [searchQuery, vehicles]);
 
-  const totalCount = mockVehicles.length;
+  const totalCount = vehicles.length;
 
   // Manejadores
   const handleMarkerClick = useCallback((vehicle: Vehicle) => {
@@ -145,7 +148,7 @@ export default function FleetMap() {
         {showFilters && (
           <div className="max-h-[calc(100vh-8rem)] overflow-y-auto overscroll-contain pr-1">
             <FilterPanel
-              vehicles={mockVehicles}
+              vehicles={vehicles}
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
             />
