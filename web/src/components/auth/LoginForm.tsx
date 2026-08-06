@@ -1,89 +1,102 @@
-import { useEffect, useState } from 'react';
-import { TEMP_USER, TEMP_USER_CREDENTIALS, getStoredUser, storeUser } from '../../lib/auth';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useLogin } from '../../hooks/useLogin';
+import { TEMP_USER_CREDENTIALS } from '../../lib/auth';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { login, loading, error } = useLogin();
 
-  useEffect(() => {
-    if (getStoredUser()) {
-      window.location.assign('/');
-    }
-  }, []);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    await new Promise((resolve) => window.setTimeout(resolve, 400));
-
-    if (email.trim().toLowerCase() === TEMP_USER_CREDENTIALS.email && password === TEMP_USER_CREDENTIALS.password) {
-      storeUser(TEMP_USER);
-      window.dispatchEvent(new Event('auth:updated'));
+    const success = await login(email, password);
+    if (success) {
       window.location.assign('/');
-      return;
     }
-
-    setError('Credenciales inválidas. Prueba con el usuario temporal mostrado abajo.');
-    setIsLoading(false);
   };
 
   return (
-    <div className="w-full max-w-md rounded-[28px] border border-[#E6E6E6] bg-white p-8 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.25)]">
-      <div className="mb-6 text-center">
+    <div className="w-full max-w-[480px] rounded-[28px] border border-[#E6E6E6] bg-white p-8 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.25)]">
+      <div className="mb-8 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#16A34A]/10 text-[#16A34A]">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </div>
-        <h2 className="mt-4 text-2xl font-semibold text-[#1E1E1E]">Iniciar sesión</h2>
-        <p className="mt-2 text-sm text-[#616161]">Ingresa al panel con un usuario temporal para probar la experiencia.</p>
+        <h1 className="mt-4 text-[2rem] font-bold text-[#1E1E1E]">¡Bienvenido de vuelta!</h1>
+        <p className="mt-2 text-[13px] leading-relaxed text-[#616161]">
+          Accede a <span className="font-semibold text-[#16A34A]">Voltianix</span> y supervisa tu flota de vehículos eléctricos desde un solo lugar.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {error ? (
+        <div role="alert" className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      ) : null}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#1E1E1E]">
-            Correo
+          <label htmlFor="email" className="mb-2 block text-[13px] font-bold text-[#1E1E1E]">
+            Email
           </label>
           <input
             id="email"
+            name="email"
             type="email"
+            required
+            autoComplete="email"
+            placeholder="demo@voltianix.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-2xl border border-[#E6E6E6] bg-[#FAFAFA] px-4 py-3 text-sm text-[#1E1E1E] outline-none ring-0 transition focus:border-[#16A34A] focus:bg-white"
-            placeholder="demo@voltianix.com"
-            autoComplete="email"
-            required
+            className="h-11 w-full rounded-lg border border-[#E6E6E6] px-4 text-[13px] outline-none transition-colors focus:border-[#2563EB]"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-2 block text-sm font-medium text-[#1E1E1E]">
+          <label htmlFor="password" className="mb-2 block text-[13px] font-bold text-[#1E1E1E]">
             Contraseña
           </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-2xl border border-[#E6E6E6] bg-[#FAFAFA] px-4 py-3 text-sm text-[#1E1E1E] outline-none ring-0 transition focus:border-[#16A34A] focus:bg-white"
-            placeholder="••••••••"
-            autoComplete="current-password"
-            required
-          />
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              autoComplete="current-password"
+              placeholder="Ingresa tu contraseña"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="h-11 w-full rounded-lg border border-[#E6E6E6] pl-4 pr-10 text-[13px] outline-none transition-colors focus:border-[#2563EB]"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#616161] transition hover:text-[#1E1E1E]"
+            >
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
-
-        {error ? <p className="text-sm text-[#F53131]">{error}</p> : null}
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center rounded-2xl bg-[#16A34A] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#15803D] disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isLoading}
+          disabled={loading}
+          className="flex h-11 w-full items-center justify-center rounded-full bg-[#2563EB] text-[13px] font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isLoading ? 'Ingresando...' : 'Entrar'}
+          {loading ? 'Iniciando sesión…' : 'Iniciar sesión'}
         </button>
       </form>
 

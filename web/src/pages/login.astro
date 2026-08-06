@@ -1,10 +1,30 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
+import GuestOnly from '../components/auth/GuestOnly';
 import LoginForm from '../components/auth/LoginForm';
 ---
 
 <DashboardLayout title="Login — Voltianix" currentPage="login">
-  <main class="min-h-[calc(100vh-3.5rem)] flex items-center justify-center bg-[#F7F7F7] px-4 py-10">
-    <LoginForm client:load />
-  </main>
+  <GuestOnly client:load>
+    <main class="min-h-screen bg-[#1E1E1E] p-5 font-['Poppins']">
+      <div class="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-[1400px] overflow-hidden rounded-2xl border border-[#333333] bg-white shadow-2xl lg:grid lg:grid-cols-[1.08fr_1fr]">
+        <section class="relative hidden h-full overflow-hidden lg:block">
+          <img src="/67.jpg" alt="Van Eléctrica Voltianix" class="absolute inset-0 h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-black/40"></div>
+          <div class="absolute bottom-12 left-10 right-10 text-white">
+            <h2 class="mb-4 max-w-[520px] text-[2.5rem] font-semibold leading-[1.2]">
+              La nueva generación en gestión de movilidad eléctrica.
+            </h2>
+            <p class="max-w-[500px] text-[13px] leading-relaxed text-white/90">
+              Supervisa tu flota en tiempo real, controla la batería de cada unidad y optimiza las operaciones desde una plataforma inteligente.
+            </p>
+          </div>
+        </section>
+
+        <section class="flex items-center justify-center bg-[#F7F8FA] px-6 py-10 sm:px-10 lg:px-10">
+          <LoginForm client:load />
+        </section>
+      </div>
+    </main>
+  </GuestOnly>
 </DashboardLayout>
