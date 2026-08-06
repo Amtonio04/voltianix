@@ -4,7 +4,7 @@ import FilterPanel from '../dashboard/FilterPanel';
 import { useVehicles } from '../../hooks/useVehicles';
 import type { BatteryLevel, ColorCategory, VehicleStatus, VehicleType } from '../../types/vehicle';
 import { getBatteryLevel } from '../../types/vehicle';
-import VehiclePresentationCard from '../vehicle/VehiclePresentationCard';
+import VehiclePresentationCard from './VehiclePresentationCard';
 
 const filterCategories: { key: Exclude<ColorCategory, null>; label: string }[] = [
   { key: 'status', label: 'Estado Operativo' },
