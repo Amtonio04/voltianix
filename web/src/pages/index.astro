@@ -2,14 +2,17 @@
 import DashboardLayout from '../layouts/DashboardLayout.astro';
 import Header from '../components/layout/Header';
 import FleetMap from '../components/map/FleetMap';
+import AuthGuard from '../components/auth/AuthGuard';
 ---
 
 <DashboardLayout>
-  <div class="h-screen flex flex-col overflow-hidden">
-    <Header client:load />
+  <AuthGuard client:load>
+    <div class="h-screen flex flex-col overflow-hidden">
+      <Header client:load />
 
-    <main class="flex-1 relative" style="margin-top: 56px;">
-      <FleetMap client:only="react" />
-    </main>
-  </div>
+      <main class="flex-1 relative" style="margin-top: 56px;">
+        <FleetMap client:only="react" />
+      </main>
+    </div>
+  </AuthGuard>
 </DashboardLayout>

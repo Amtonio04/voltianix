@@ -1,15 +1,57 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
+import LoginForm from '../components/auth/LoginForm';
+import GuestOnly from '../components/auth/GuestOnly';
 ---
 
 <DashboardLayout title="Login — Voltianix">
-  <main class="h-screen flex items-center justify-center bg-gray-50">
-    <div class="text-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-      <h2 class="text-lg font-semibold text-gray-400 mb-1">Login</h2>
-      <p class="text-sm text-gray-400">Pantalla de inicio de sesión</p>
-    </div>
-  </main>
+  <GuestOnly client:load>
+    <main class="min-h-screen bg-[#1E1E1E] flex items-center justify-center p-5 font-['Poppins']">
+      <div
+        class="
+          w-full
+          max-w-[1400px]
+          h-[720px]
+          overflow-hidden
+          rounded-2xl
+          border
+          border-[#333333]
+          bg-white
+          grid
+          lg:grid-cols-[1.08fr_1fr]
+          shadow-2xl
+        "
+      >
+        {/* Lado Izquierdo: Imagen y Texto */}
+        <section class="relative overflow-hidden h-full">
+          <img
+            src="/67.jpg"
+            alt="Van Eléctrica Voltianix"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+
+          {/* Filtro oscuro para la imagen */}
+          <div class="absolute inset-0 bg-black/40"></div>
+
+          {/* Textos sobre la imagen */}
+          <div class="absolute left-10 right-10 bottom-12 text-white">
+            <h2 class="max-w-[520px] text-[2.5rem] leading-[1.2] font-semibold mb-4">
+              La nueva Generación en Gestión de Movilidad Eléctrica.
+            </h2>
+
+            <p class="max-w-[500px] text-[13px] leading-relaxed text-white/90">
+              Supervisa tu flota en tiempo real, controla la batería de cada
+              unidad y optimiza las operaciones desde una plataforma
+              inteligente.
+            </p>
+          </div>
+        </section>
+
+        {/* Lado Derecho: Formulario */}
+        <section class="flex items-center justify-center bg-[#F7F8FA] px-10">
+          <LoginForm client:load />
+        </section>
+      </div>
+    </main>
+  </GuestOnly>
 </DashboardLayout>
