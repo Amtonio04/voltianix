@@ -87,3 +87,25 @@ export function getVehicleColor(vehicle: Vehicle, category: ColorCategory): stri
     case 'type': return getTypeColor(vehicle.type);
   }
 }
+
+export function getVehicleAlerts(vehicle: Vehicle): string[] {
+  const alerts: string[] = [];
+  if (vehicle.status === 'mantenimiento') {
+    alerts.push('Unidad en mantenimiento');
+  }
+  if (vehicle.battery <= 20) {
+    alerts.push('Batería crítica');
+  }
+  return alerts;
+}
+
+export function getVehicleCardViewModel(vehicle: Vehicle) {
+  const batteryLevel = getBatteryLevel(vehicle.battery);
+  return {
+    batteryColor: getBatteryColor(batteryLevel),
+    statusColor: getStatusColor(vehicle.status),
+    statusLabel: getStatusLabel(vehicle.status),
+    typeLabel: getTypeLabel(vehicle.type),
+    alerts: getVehicleAlerts(vehicle),
+  };
+}

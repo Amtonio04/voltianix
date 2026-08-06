@@ -2,8 +2,9 @@ import { useMemo, useState } from 'react';
 import SearchBar from '../dashboard/SearchBar';
 import FilterPanel from '../dashboard/FilterPanel';
 import { useVehicles } from '../../hooks/useVehicles';
-import type { BatteryLevel, ColorCategory, Vehicle, VehicleStatus, VehicleType } from '../../types/vehicle';
-import { getBatteryColor, getBatteryLevel, getStatusColor, getStatusLabel, getTypeLabel } from '../../types/vehicle';
+import type { BatteryLevel, ColorCategory, VehicleStatus, VehicleType } from '../../types/vehicle';
+import { getBatteryLevel } from '../../types/vehicle';
+import VehiclePresentationCard from '../vehicle/VehiclePresentationCard';
 
 const filterCategories: { key: Exclude<ColorCategory, null>; label: string }[] = [
   { key: 'status', label: 'Estado Operativo' },
@@ -124,64 +125,9 @@ export default function VehicleDirectory() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
-          {filteredVehicles.map((vehicle) => {
-            const batteryLevel = getBatteryLevel(vehicle.battery);
-            const batteryColor = getBatteryColor(batteryLevel);
-            const statusColor = getStatusColor(vehicle.status);
-            const alerts = getVehicleAlerts(vehicle);
-
-            return (
-              <article key={vehicle.id} className="rounded-[28px] border border-[#E6E6E6] bg-white p-6 shadow-sm">
-                <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#616161]">{vehicle.label}</p>
-                    <h2 className="mt-2 text-xl font-semibold text-[#1E1E1E]">{vehicle.model}</h2>
-                  </div>
-                  <span className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: statusColor, backgroundColor: `${statusColor}14`, borderColor: `${statusColor}33` }}>
-                    {getStatusLabel(vehicle.status)}
-                  </span>
-                </div>
-
-                <div className="space-y-4 text-sm text-[#616161]">
-                  <InfoRow label="Usuario" value={vehicle.driver} />
-                  <InfoRow label="Tipo de unidad" value={getTypeLabel(vehicle.type)} />
-                  <InfoRow label="Autonomía restante" value={`${vehicle.autonomy} km`} />
-                  <InfoRow label="Última actualización" value={vehicle.lastUpdate} />
-
-                  <div className="rounded-[20px] border border-[#E6E6E6] bg-[#F9F9F9] p-4">
-                    <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-[#616161]">
-                      <span>Batería</span>
-                      <span className="font-semibold text-[#1E1E1E]">{vehicle.battery}%</span>
-                    </div>
-                    <div className="h-2.5 overflow-hidden rounded-full bg-white shadow-sm">
-                      <div className="h-full rounded-full" style={{ width: `${vehicle.battery}%`, backgroundColor: batteryColor }} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 rounded-[24px] bg-[#F9F9F9] p-4 text-sm text-[#616161]">
-                  <p className="font-semibold text-[#1E1E1E]">Ubicación</p>
-                  <p className="mt-1 leading-relaxed">{vehicle.location.address}</p>
-                </div>
-
-                <div className="mt-4 rounded-[24px] border border-[#E6E6E6] bg-[#F9F9F9] px-4 py-3 text-sm">
-                  <p className="mb-2 font-semibold text-[#1E1E1E]">Alertas</p>
-                  {alerts.length > 0 ? (
-                    <ul className="space-y-2">
-                      {alerts.map((alert) => (
-                        <li key={alert} className="flex items-center gap-2 text-[#616161]">
-                          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#F53131]" />
-                          <span>{alert}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-[#616161]">Sin Alertas</p>
-                  )}
-                </div>
-              </article>
-            );
-          })}
+          {filteredVehicles.map((vehicle) => (
+            <VehiclePresentationCard key={vehicle.id} vehicle={vehicle} variant="directory" />
+          ))}
         </div>
       </div>
     </div>
@@ -200,22 +146,4 @@ function SummaryCard({ label, value, accent }: { label: string; value: number; a
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-[#616161]">{label}</span>
-      <span className="text-sm font-semibold text-[#1E1E1E]">{value}</span>
-    </div>
-  );
-}
 
-function getVehicleAlerts(vehicle: Vehicle) {
-  const alerts: string[] = [];
-  if (vehicle.status === 'mantenimiento') {
-    alerts.push('Unidad en mantenimiento');
-  }
-  if (vehicle.battery <= 20) {
-    alerts.push('Batería crítica');
-  }
-  return alerts;
-}
