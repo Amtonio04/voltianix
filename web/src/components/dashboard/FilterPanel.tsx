@@ -74,13 +74,6 @@ export default function FilterPanel({
   const options =
     activeCategory === 'status' ? statusOptions : activeCategory === 'battery' ? batteryOptions : typeOptions;
 
-  const selectedKeys =
-    activeCategory === 'status'
-      ? selectedStatuses
-      : activeCategory === 'battery'
-        ? selectedBatteryLevels
-        : selectedTypes;
-
   const toggleOption = (key: string) => {
     if (activeCategory === 'status') {
       onStatusToggle(key as VehicleStatus);
@@ -92,20 +85,20 @@ export default function FilterPanel({
   };
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-[#E6E6E6] bg-white shadow-sm" style={{ border: '1px solid #E6E6E6' }}>
-      <div className="flex items-center justify-between border-b border-[#E6E6E6] px-4 py-3" style={{ borderBottom: '1px solid #E6E6E6' }}>
+    <div className="w-full overflow-hidden rounded-[24px] border border-[#E6E6E6] bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-[#E6E6E6] px-4 py-3">
         <div>
-          <h3 className="text-sm font-semibold" style={{ color: '#1E1E1E' }}>Unidades Activas</h3>
-          <p className="text-sm font-semibold tabular-nums" style={{ color: '#616161' }}>
+          <h3 className="text-sm font-semibold text-[#1E1E1E]">Unidades Activas</h3>
+          <p className="text-sm font-semibold tabular-nums text-[#616161]">
             {activeCount}/{totalCount}
           </p>
         </div>
-        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: '#616161' }}>
+        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#616161]">
           {activeLabel}
         </span>
       </div>
 
-      <div className="px-4 py-4">
+      <div className="grid gap-2 px-4 py-4 sm:grid-cols-2 xl:grid-cols-1">
         {options.map((option) => {
           const count =
             activeCategory === 'status'
@@ -125,16 +118,20 @@ export default function FilterPanel({
               key={option.key}
               type="button"
               onClick={() => toggleOption(option.key)}
-              className="flex w-full items-center gap-2 px-1 py-1.5 text-left transition-colors hover:bg-gray-50"
+              className={`flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition-all duration-200 ${
+                isSelected
+                  ? 'border-[#D7DBE3] bg-[#F8FAFC] shadow-sm'
+                  : 'border-transparent bg-white hover:border-[#E6E6E6] hover:bg-[#F8FAFC]'
+              }`}
             >
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: isSelected ? option.color : '#AFAFAF' }}
               />
-              <span className="flex-1 text-sm" style={{ color: isSelected ? '#1E1E1E' : '#AFAFAF' }}>
+              <span className={`flex-1 text-sm font-medium ${isSelected ? 'text-[#1E1E1E]' : 'text-[#AFAFAF]'}`}>
                 {option.label}
               </span>
-              <span className="text-sm font-medium tabular-nums" style={{ color: isSelected ? '#616161' : '#AFAFAF' }}>
+              <span className={`text-sm font-semibold tabular-nums ${isSelected ? 'text-[#616161]' : 'text-[#AFAFAF]'}`}>
                 {count}
               </span>
             </button>

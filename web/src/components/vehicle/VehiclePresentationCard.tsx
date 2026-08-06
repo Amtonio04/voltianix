@@ -27,46 +27,41 @@ export default function VehiclePresentationCard({
   if (isMapVariant) {
     return (
       <div
-        className={`w-80 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col animate-fade-in ${className}`.trim()}
-        style={{ border: '1px solid #E6E6E6' }}
+        className={`w-80 overflow-hidden rounded-[24px] border border-[#E6E6E6] bg-white shadow-lg transition-all duration-200 ${className}`.trim()}
       >
-        <div className="px-4 py-3 relative" style={{ borderBottom: '1px solid #E6E6E6' }}>
+        <div className="relative border-b border-[#E6E6E6] px-4 py-3">
           {onClose && (
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full transition-colors hover:bg-gray-100"
               style={{ color: '#616161' }}
               aria-label="Cerrar tarjeta"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
-          <h3 className="font-semibold text-base pr-6" style={{ color: '#1E1E1E' }}>
-            {vehicle.model}
-          </h3>
+          <h3 className="pr-6 text-base font-semibold text-[#1E1E1E]">{vehicle.model}</h3>
         </div>
 
-        <div className="px-4 py-3 flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 px-4 py-3">
           <InfoRow icon={<UserIcon />} label="Usuario" value={vehicle.driver} />
 
           <div className="flex items-start gap-2.5">
-            <div className="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center">
+            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
               <BoltIcon />
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm font-medium" style={{ color: '#1E1E1E' }}>Batería</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-sm font-medium text-[#1E1E1E]">Batería</span>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
                   <div
                     className="h-full rounded-full animate-battery-fill"
                     style={{ width: `${vehicle.battery}%`, backgroundColor: batteryColor }}
                   />
                 </div>
-                <span className="text-sm font-medium tabular-nums" style={{ color: '#616161' }}>
-                  {vehicle.battery}%
-                </span>
+                <span className="text-sm font-medium tabular-nums text-[#616161]">{vehicle.battery}%</span>
               </div>
             </div>
           </div>
@@ -80,8 +75,7 @@ export default function VehiclePresentationCard({
           <div className="px-4 pb-4 pt-1">
             <button
               onClick={() => onViewDetails(vehicle.id)}
-              className="w-full text-white rounded-lg py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer hover:opacity-90 active:scale-[0.98]"
-              style={{ backgroundColor: '#2563EB' }}
+              className="w-full cursor-pointer rounded-xl bg-[#2563EB] py-2.5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
             >
               Ver Detalles
             </button>
@@ -95,7 +89,7 @@ export default function VehiclePresentationCard({
     <article
       id={cardId}
       tabIndex={-1}
-      className={`rounded-[28px] border border-[#E6E6E6] bg-white p-6 shadow-sm transition-all duration-200 ${isHighlighted ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20 shadow-[0_0_0_2px_rgba(37,99,235,0.08)]' : ''} ${className}`.trim()}
+      className={`group rounded-[28px] border border-[#E6E6E6] bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] ${isHighlighted ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20 shadow-[0_0_0_2px_rgba(37,99,235,0.08)]' : ''} ${className}`.trim()}
     >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -110,29 +104,31 @@ export default function VehiclePresentationCard({
         </span>
       </div>
 
-      <div className="space-y-4 text-sm text-[#616161]">
-        <InfoRow label="Usuario" value={vehicle.driver} />
-        <InfoRow label="Tipo de unidad" value={typeLabel} />
-        <InfoRow label="Autonomía restante" value={`${vehicle.autonomy} km`} />
-        <InfoRow label="Última actualización" value={vehicle.lastUpdate} />
+      <div className="rounded-[20px] border border-[#ECEFF4] bg-[#F8FAFC] p-4">
+        <div className="space-y-4 text-sm text-[#616161]">
+          <InfoRow label="Usuario" value={vehicle.driver} />
+          <InfoRow label="Tipo de unidad" value={typeLabel} />
+          <InfoRow label="Autonomía restante" value={`${vehicle.autonomy} km`} />
+          <InfoRow label="Última actualización" value={vehicle.lastUpdate} />
 
-        <div className="rounded-[20px] border border-[#E6E6E6] bg-[#F9F9F9] p-4">
-          <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-[#616161]">
-            <span>Batería</span>
-            <span className="font-semibold text-[#1E1E1E]">{vehicle.battery}%</span>
-          </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-white shadow-sm">
-            <div className="h-full rounded-full" style={{ width: `${vehicle.battery}%`, backgroundColor: batteryColor }} />
+          <div className="rounded-[18px] border border-[#E6E6E6] bg-white p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-[#616161]">
+              <span>Batería</span>
+              <span className="font-semibold text-[#1E1E1E]">{vehicle.battery}%</span>
+            </div>
+            <div className="h-2.5 overflow-hidden rounded-full bg-[#F0F2F5] shadow-inner">
+              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${vehicle.battery}%`, backgroundColor: batteryColor }} />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-5 rounded-[24px] bg-[#F9F9F9] p-4 text-sm text-[#616161]">
+      <div className="mt-4 rounded-[24px] border border-[#E6E6E6] bg-[#FAFBFC] p-4 text-sm text-[#616161]">
         <p className="font-semibold text-[#1E1E1E]">Ubicación</p>
         <p className="mt-1 leading-relaxed">{vehicle.location.address}</p>
       </div>
 
-      <div className="mt-4 rounded-[24px] border border-[#E6E6E6] bg-[#F9F9F9] px-4 py-3 text-sm">
+      <div className="mt-4 rounded-[24px] border border-[#E6E6E6] bg-[#FAFBFC] px-4 py-3 text-sm">
         <p className="mb-2 font-semibold text-[#1E1E1E]">Alertas</p>
         {alerts.length > 0 ? (
           <ul className="space-y-2">
@@ -155,11 +151,11 @@ function InfoRow({ icon, label, value }: { icon?: ReactNode; label: string; valu
   return (
     <div className="flex items-start gap-2.5">
       {icon ? (
-        <div className="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center">{icon}</div>
+        <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">{icon}</div>
       ) : null}
       <div className="flex-1">
-        <span className="text-sm font-medium" style={{ color: '#1E1E1E' }}>{label}</span>
-        <p className="text-sm mt-0.5" style={{ color: '#616161' }}>{value}</p>
+        <span className="text-sm font-medium text-[#1E1E1E]">{label}</span>
+        <p className="mt-0.5 text-sm text-[#616161]">{value}</p>
       </div>
     </div>
   );
@@ -167,7 +163,7 @@ function InfoRow({ icon, label, value }: { icon?: ReactNode; label: string; valu
 
 function UserIcon() {
   return (
-    <svg className="w-5 h-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <svg className="h-5 w-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
     </svg>
   );
@@ -175,7 +171,7 @@ function UserIcon() {
 
 function BoltIcon() {
   return (
-    <svg className="w-5 h-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <svg className="h-5 w-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
   );
@@ -183,7 +179,7 @@ function BoltIcon() {
 
 function PinIcon() {
   return (
-    <svg className="w-5 h-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <svg className="h-5 w-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
@@ -192,7 +188,7 @@ function PinIcon() {
 
 function ClockIcon() {
   return (
-    <svg className="w-5 h-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+    <svg className="h-5 w-5" style={{ color: '#1E1E1E' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   );
