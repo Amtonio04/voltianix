@@ -1,11 +1,18 @@
 import { useMemo } from 'react';
-import type { Vehicle, VehicleStatus, VehicleType, BatteryLevel, ColorCategory } from '../../types/vehicle';
+import type { BatteryLevel, Vehicle, VehicleStatus, VehicleType, ColorCategory } from '../../types/vehicle';
 import { getBatteryLevel } from '../../types/vehicle';
 
 interface FilterPanelProps {
   vehicles: Vehicle[];
-  activeCategory: ColorCategory;
-  onCategoryChange: (category: ColorCategory) => void;
+  totalCount: number;
+  activeCount: number;
+  activeCategory: Exclude<ColorCategory, null>;
+  selectedStatuses: VehicleStatus[];
+  selectedBatteryLevels: BatteryLevel[];
+  selectedTypes: VehicleType[];
+  onStatusToggle: (status: VehicleStatus) => void;
+  onBatteryToggle: (level: BatteryLevel) => void;
+  onTypeToggle: (type: VehicleType) => void;
 }
 
 const statusOptions: { key: VehicleStatus; label: string; color: string }[] = [
@@ -29,197 +36,106 @@ const typeOptions: { key: VehicleType; label: string; color: string }[] = [
 
 export default function FilterPanel({
   vehicles,
+  totalCount,
+  activeCount,
   activeCategory,
-  onCategoryChange,
+  selectedStatuses,
+  selectedBatteryLevels,
+  selectedTypes,
+  onStatusToggle,
+  onBatteryToggle,
+  onTypeToggle,
 }: FilterPanelProps) {
-  const totalCount = vehicles.length;
-
-  // Conteos
   const statusCounts = useMemo(() => {
-    const c: Record<VehicleStatus, number> = { 'en-ruta': 0, 'cargando': 0, 'mantenimiento': 0 };
-    vehicles.forEach(v => c[v.status]++);
-    return c;
+    const counts: Record<VehicleStatus, number> = { 'en-ruta': 0, 'cargando': 0, 'mantenimiento': 0 };
+    vehicles.forEach((vehicle) => counts[vehicle.status]++);
+    return counts;
   }, [vehicles]);
 
   const batteryCounts = useMemo(() => {
-    const c: Record<BatteryLevel, number> = { high: 0, medium: 0, low: 0 };
-    vehicles.forEach(v => c[getBatteryLevel(v.battery)]++);
-    return c;
+    const counts: Record<BatteryLevel, number> = { high: 0, medium: 0, low: 0 };
+    vehicles.forEach((vehicle) => counts[getBatteryLevel(vehicle.battery)]++);
+    return counts;
   }, [vehicles]);
 
   const typeCounts = useMemo(() => {
-    const c: Record<VehicleType, number> = { automovil: 0, van: 0, camion: 0, motocicleta: 0 };
-    vehicles.forEach(v => c[v.type]++);
-    return c;
+    const counts: Record<VehicleType, number> = { automovil: 0, van: 0, camion: 0, motocicleta: 0 };
+    vehicles.forEach((vehicle) => counts[vehicle.type]++);
+    return counts;
   }, [vehicles]);
 
-  const isStatus = activeCategory === 'status';
-  const isBattery = activeCategory === 'battery';
-  const isType = activeCategory === 'type';
+  const activeLabel =
+    activeCategory === 'status'
+      ? 'Estado Operativo'
+      : activeCategory === 'battery'
+      ? 'Nivel de Batería'
+      : 'Tipo de Unidad';
+
+  const options =
+    activeCategory === 'status' ? statusOptions : activeCategory === 'battery' ? batteryOptions : typeOptions;
+
+  const selectedKeys =
+    activeCategory === 'status'
+      ? selectedStatuses
+      : activeCategory === 'battery'
+      ? selectedBatteryLevels
+      : selectedTypes;
+
+  const toggleOption = (key: string) => {
+    if (activeCategory === 'status') {
+      onStatusToggle(key as VehicleStatus);
+    } else if (activeCategory === 'battery') {
+      onBatteryToggle(key as BatteryLevel);
+    } else {
+      onTypeToggle(key as VehicleType);
+    }
+  };
 
   return (
-    <div
-      className="w-72 bg-white rounded-lg shadow-sm flex flex-col overflow-hidden animate-slide-in-left"
-      style={{ border: '1px solid #E6E6E6' }}
-    >
-      {/* Unidades Activas */}
-      <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid #E6E6E6' }}>
-        <h3 className="font-semibold text-sm" style={{ color: '#1E1E1E' }}>Unidades Activas</h3>
-        <span className="text-sm font-semibold tabular-nums" style={{ color: '#616161' }}>
-          {totalCount}/{totalCount}
+    <div className="w-full rounded-[28px] border border-[#E6E6E6] bg-white shadow-sm">
+      <div className="flex items-center justify-between gap-4 border-b border-[#E6E6E6] px-4 py-4">
+        <div>
+          <p className="text-sm font-semibold text-[#1E1E1E]">Unidades Activas</p>
+          <p className="text-sm text-[#616161]">{activeCount}/{totalCount}</p>
+        </div>
+        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#616161]">
+          {activeLabel}
         </span>
       </div>
 
-      {/* Estado Operativo */}
-      <CategorySection
-        title="Estado Operativo"
-        icon={<CheckboxIcon checked={isStatus} />}
-        active={isStatus}
-        onClick={() => onCategoryChange(isStatus ? null : 'status')}
-      >
-        {statusOptions.map((opt) => (
-          <FilterRow
-            key={opt.key}
-            label={opt.label}
-            dotColor={opt.color}
-            count={statusCounts[opt.key]}
-            active={isStatus}
-          />
-        ))}
-      </CategorySection>
+      <div className="px-4 py-5 space-y-3">
+        {options.map((option) => {
+          const count =
+            activeCategory === 'status'
+              ? statusCounts[option.key as VehicleStatus]
+              : activeCategory === 'battery'
+              ? batteryCounts[option.key as BatteryLevel]
+              : typeCounts[option.key as VehicleType];
 
-      {/* Nivel de Batería */}
-      <CategorySection
-        title="Nivel de Batería"
-        icon={<CheckboxIcon checked={isBattery} />}
-        active={isBattery}
-        onClick={() => onCategoryChange(isBattery ? null : 'battery')}
-      >
-        {batteryOptions.map((opt) => (
-          <FilterRow
-            key={opt.key}
-            label={opt.label}
-            dotColor={opt.color}
-            count={batteryCounts[opt.key]}
-            active={isBattery}
-          />
-        ))}
-      </CategorySection>
+          const isSelected = selectedKeys.includes(option.key as any);
 
-      {/* Tipo de Unidad */}
-      <CategorySection
-        title="Tipo de Unidad"
-        icon={<CheckboxIcon checked={isType} />}
-        active={isType}
-        onClick={() => onCategoryChange(isType ? null : 'type')}
-        noBorder
-      >
-        {typeOptions.map((opt) => (
-          <FilterRow
-            key={opt.key}
-            label={opt.label}
-            dotColor={opt.color}
-            count={typeCounts[opt.key]}
-            active={isType}
-          />
-        ))}
-      </CategorySection>
-    </div>
-  );
-}
-
-/* Encabezado de sección (clic para activar la categoría) */
-
-function CategorySection({
-  title,
-  icon,
-  active,
-  onClick,
-  noBorder,
-  children,
-}: {
-  title: string;
-  icon?: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
-  noBorder?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div style={{ borderBottom: noBorder ? 'none' : '1px solid #E6E6E6' }}>
-      <div
-        onClick={onClick}
-        className="px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none hover:bg-gray-50 transition-colors"
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); onClick(); } }}
-      >
-        {icon}
-        <span
-          className="text-sm font-semibold transition-colors"
-          style={{ color: active ? '#1E1E1E' : '#616161' }}
-        >
-          {title}
-        </span>
-      </div>
-      <div className="px-4 pb-2.5 space-y-0.5">
-        {children}
+          return (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => toggleOption(option.key)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
+                isSelected
+                  ? 'border-[#16A34A] bg-[#ECFDF5] shadow-sm'
+                  : 'border-[#E6E6E6] bg-[#F8FAFC] hover:bg-[#F4F6F8]'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${option.color}`} />
+                  <span className="text-sm font-medium text-[#1E1E1E]">{option.label}</span>
+                </div>
+                <span className="text-sm font-semibold text-[#616161]">{count}</span>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
-  );
-}
-
-/* Fila de filtro: muestra punto de color + etiqueta + conteo */
-
-function FilterRow({
-  label,
-  dotColor,
-  count,
-  active,
-}: {
-  label: string;
-  dotColor?: string;
-  count: number;
-  active: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-2 py-0.5 px-1">
-      {dotColor && (
-        <span
-          className="w-2 h-2 rounded-full shrink-0 transition-all"
-          style={{ backgroundColor: active ? dotColor : '#AFAFAF' }}
-        />
-      )}
-      <span
-        className="flex-1 text-sm transition-colors"
-        style={{ color: active ? '#1E1E1E' : '#AFAFAF' }}
-      >
-        {label}
-      </span>
-      <span
-        className="text-sm tabular-nums font-medium transition-colors"
-        style={{ color: active ? '#616161' : '#AFAFAF' }}
-      >
-        {count}
-      </span>
-    </div>
-  );
-}
-
-/* Icono de checkbox para el encabezado de sección */
-
-function CheckboxIcon({ checked }: { checked: boolean }) {
-  if (checked) {
-    return (
-      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#1E1E1E" strokeWidth={2}>
-        <rect x="3" y="3" width="18" height="18" rx="3" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
-      </svg>
-    );
-  }
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#AFAFAF" strokeWidth={2}>
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-    </svg>
   );
 }
