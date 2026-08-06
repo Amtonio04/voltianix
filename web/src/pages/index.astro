@@ -1,15 +1,10 @@
 ---
 import DashboardLayout from '../layouts/DashboardLayout.astro';
-import Header from '../components/layout/Header';
 import FleetMap from '../components/map/FleetMap';
 ---
 
-<DashboardLayout>
-  <div class="h-screen flex flex-col overflow-hidden">
-    <Header client:load />
-
-    <main class="flex-1 relative" style="margin-top: 56px;">
-      <FleetMap client:only="react" />
-    </main>
-  </div>
+<DashboardLayout currentPage="mapa">
+  <main class="h-[calc(100vh-3.5rem)] overflow-hidden">
+    <FleetMap client:only="react" />
+  </main>
 </DashboardLayout>

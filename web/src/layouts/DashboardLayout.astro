@@ -1,12 +1,16 @@
 ---
+import Header from '../components/layout/Header';
+
 interface Props {
   title?: string;
   description?: string;
+  currentPage?: 'mapa' | 'unidades' | 'login';
 }
 
 const {
   title = 'Voltianix — Monitoreo Inteligente de Flotas Eléctricas',
   description = 'Plataforma de gestión y monitoreo en tiempo real para flotas de vehículos eléctricos. Visualiza estado operativo, batería, autonomía y ubicación.',
+  currentPage = 'mapa',
 } = Astro.props;
 ---
 
@@ -31,7 +35,10 @@ const {
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-white font-sans antialiased">
-    <slot />
+    <Header currentPage={currentPage} client:load />
+    <div class="pt-14 min-h-screen">
+      <slot />
+    </div>
   </body>
 </html>
 
