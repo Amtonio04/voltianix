@@ -68,8 +68,8 @@ export default function FilterPanel({
     activeCategory === 'status'
       ? 'Estado Operativo'
       : activeCategory === 'battery'
-      ? 'Nivel de Batería'
-      : 'Tipo de Unidad';
+        ? 'Nivel de Batería'
+        : 'Tipo de Unidad';
 
   const options =
     activeCategory === 'status' ? statusOptions : activeCategory === 'battery' ? batteryOptions : typeOptions;
@@ -78,8 +78,8 @@ export default function FilterPanel({
     activeCategory === 'status'
       ? selectedStatuses
       : activeCategory === 'battery'
-      ? selectedBatteryLevels
-      : selectedTypes;
+        ? selectedBatteryLevels
+        : selectedTypes;
 
   const toggleOption = (key: string) => {
     if (activeCategory === 'status') {
@@ -92,46 +92,51 @@ export default function FilterPanel({
   };
 
   return (
-    <div className="w-full rounded-[28px] border border-[#E6E6E6] bg-white shadow-sm">
-      <div className="flex items-center justify-between gap-4 border-b border-[#E6E6E6] px-4 py-4">
+    <div className="w-full overflow-hidden rounded-lg border border-[#E6E6E6] bg-white shadow-sm" style={{ border: '1px solid #E6E6E6' }}>
+      <div className="flex items-center justify-between border-b border-[#E6E6E6] px-4 py-3" style={{ borderBottom: '1px solid #E6E6E6' }}>
         <div>
-          <p className="text-sm font-semibold text-[#1E1E1E]">Unidades Activas</p>
-          <p className="text-sm text-[#616161]">{activeCount}/{totalCount}</p>
+          <h3 className="text-sm font-semibold" style={{ color: '#1E1E1E' }}>Unidades Activas</h3>
+          <p className="text-sm font-semibold tabular-nums" style={{ color: '#616161' }}>
+            {activeCount}/{totalCount}
+          </p>
         </div>
-        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#616161]">
+        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: '#616161' }}>
           {activeLabel}
         </span>
       </div>
 
-      <div className="px-4 py-5 space-y-3">
+      <div className="px-4 py-4">
         {options.map((option) => {
           const count =
             activeCategory === 'status'
               ? statusCounts[option.key as VehicleStatus]
               : activeCategory === 'battery'
-              ? batteryCounts[option.key as BatteryLevel]
-              : typeCounts[option.key as VehicleType];
+                ? batteryCounts[option.key as BatteryLevel]
+                : typeCounts[option.key as VehicleType];
 
-          const isSelected = selectedKeys.includes(option.key as any);
+          const isSelected = activeCategory === 'status'
+            ? selectedStatuses.includes(option.key as VehicleStatus)
+            : activeCategory === 'battery'
+              ? selectedBatteryLevels.includes(option.key as BatteryLevel)
+              : selectedTypes.includes(option.key as VehicleType);
 
           return (
             <button
               key={option.key}
               type="button"
               onClick={() => toggleOption(option.key)}
-              className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
-                isSelected
-                  ? 'border-[#16A34A] bg-[#ECFDF5] shadow-sm'
-                  : 'border-[#E6E6E6] bg-[#F8FAFC] hover:bg-[#F4F6F8]'
-              }`}
+              className="flex w-full items-center gap-2 px-1 py-1.5 text-left transition-colors hover:bg-gray-50"
             >
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${option.color}`} />
-                  <span className="text-sm font-medium text-[#1E1E1E]">{option.label}</span>
-                </div>
-                <span className="text-sm font-semibold text-[#616161]">{count}</span>
-              </div>
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: isSelected ? option.color : '#AFAFAF' }}
+              />
+              <span className="flex-1 text-sm" style={{ color: isSelected ? '#1E1E1E' : '#AFAFAF' }}>
+                {option.label}
+              </span>
+              <span className="text-sm font-medium tabular-nums" style={{ color: isSelected ? '#616161' : '#AFAFAF' }}>
+                {count}
+              </span>
             </button>
           );
         })}

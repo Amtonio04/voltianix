@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SearchBar from '../dashboard/SearchBar';
 import FilterPanel from '../dashboard/FilterPanel';
 import { useVehicles } from '../../hooks/useVehicles';
@@ -16,6 +16,7 @@ export default function VehicleDirectory() {
   const vehicles = useVehicles();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<Exclude<ColorCategory, null>>('status');
+  const [highlightedVehicleId, setHighlightedVehicleId] = useState<string | null>(null);
   const [selectedStatuses, setSelectedStatuses] = useState<VehicleStatus[]>(['en-ruta', 'cargando', 'mantenimiento']);
   const [selectedBatteryLevels, setSelectedBatteryLevels] = useState<BatteryLevel[]>(['high', 'medium', 'low']);
   const [selectedTypes, setSelectedTypes] = useState<VehicleType[]>(['automovil', 'van', 'camion', 'motocicleta']);
@@ -59,6 +60,26 @@ export default function VehicleDirectory() {
       current.includes(type) ? current.filter((item) => item !== type) : [...current, type]
     );
   };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    setHighlightedVehicleId(params.get('vehicle'));
+  }, []);
+
+  useEffect(() => {
+    if (!highlightedVehicleId) return;
+
+    const timer = window.setTimeout(() => {
+      const element = document.getElementById(`vehicle-card-${highlightedVehicleId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus({ preventScroll: true });
+      }
+    }, 180);
+
+    return () => window.clearTimeout(timer);
+  }, [highlightedVehicleId, filteredVehicles]);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-[#F7F7F7] px-4 py-6 lg:px-8 lg:py-8">
@@ -126,7 +147,13 @@ export default function VehicleDirectory() {
 
         <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
           {filteredVehicles.map((vehicle) => (
-            <VehiclePresentationCard key={vehicle.id} vehicle={vehicle} variant="directory" />
+            <VehiclePresentationCard
+              key={vehicle.id}
+              cardId={`vehicle-card-${vehicle.id}`}
+              vehicle={vehicle}
+              variant="directory"
+              isHighlighted={highlightedVehicleId === vehicle.id}
+            />
           ))}
         </div>
       </div>

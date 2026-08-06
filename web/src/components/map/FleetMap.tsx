@@ -1,8 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { BatteryLevel, Vehicle, ColorCategory, VehicleStatus, VehicleType } from '../../types/vehicle';
-import { getBatteryLevel, getVehicleColor } from '../../types/vehicle';
+import type { Vehicle, ColorCategory } from '../../types/vehicle';
+import { getVehicleColor } from '../../types/vehicle';
 import { useVehicles } from '../../hooks/useVehicles';
 import VehicleMarkerComponent from './VehicleMarker';
 import SearchBar from '../dashboard/SearchBar';
@@ -69,29 +69,17 @@ export default function FleetMap() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [showFilters, setShowFilters] = useState(true);
-
-  const [activeCategory, setActiveCategory] = useState<ColorCategory>('status');
-  const [selectedStatuses, setSelectedStatuses] = useState<VehicleStatus[]>(['en-ruta', 'cargando', 'mantenimiento']);
-  const [selectedBatteryLevels, setSelectedBatteryLevels] = useState<BatteryLevel[]>(['high', 'medium', 'low']);
-  const [selectedTypes, setSelectedTypes] = useState<VehicleType[]>(['automovil', 'van', 'camion', 'motocicleta']);
+  const [activeCategory, setActiveCategory] = useState<ColorCategory>(null);
 
   const filteredVehicles = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+    if (!searchQuery) return vehicles;
 
+    const query = searchQuery.toLowerCase();
     return vehicles.filter((vehicle) => {
-      if (!selectedStatuses.includes(vehicle.status)) return false;
-      if (!selectedBatteryLevels.includes(getBatteryLevel(vehicle.battery))) return false;
-      if (!selectedTypes.includes(vehicle.type)) return false;
-
-      if (!query) return true;
-      return (
-        vehicle.label.toLowerCase().includes(query) ||
-        vehicle.driver.toLowerCase().includes(query) ||
-        vehicle.model.toLowerCase().includes(query) ||
-        vehicle.location.address.toLowerCase().includes(query)
-      );
+      const haystack = `${vehicle.label} ${vehicle.driver} ${vehicle.model} ${vehicle.location.address}`.toLowerCase();
+      return haystack.includes(query);
     });
-  }, [searchQuery, vehicles, selectedStatuses, selectedBatteryLevels, selectedTypes]);
+  }, [searchQuery, vehicles]);
 
   const totalCount = vehicles.length;
 
@@ -104,30 +92,14 @@ export default function FleetMap() {
     setSelectedVehicle(null);
   }, []);
 
-  const handleViewDetails = useCallback((_vehicleId: string) => {
-    // Futuro: navegar a la página de detalle del vehículo
+  const handleViewDetails = useCallback((vehicleId: string) => {
+    if (typeof window !== 'undefined') {
+      window.location.assign(`/unidades?vehicle=${vehicleId}`);
+    }
   }, []);
 
   const toggleFilters = useCallback(() => {
     setShowFilters((prev) => !prev);
-  }, []);
-
-  const toggleStatus = useCallback((status: VehicleStatus) => {
-    setSelectedStatuses((current) =>
-      current.includes(status) ? current.filter((item) => item !== status) : [...current, status]
-    );
-  }, []);
-
-  const toggleBatteryLevel = useCallback((level: BatteryLevel) => {
-    setSelectedBatteryLevels((current) =>
-      current.includes(level) ? current.filter((item) => item !== level) : [...current, level]
-    );
-  }, []);
-
-  const toggleType = useCallback((type: VehicleType) => {
-    setSelectedTypes((current) =>
-      current.includes(type) ? current.filter((item) => item !== type) : [...current, type]
-    );
   }, []);
 
   // Centro de Aguascalientes, México

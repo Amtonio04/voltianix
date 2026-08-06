@@ -53,10 +53,15 @@ export default function MapFilterPanel({ vehicles, activeCategory, onCategoryCha
   const isType = activeCategory === 'type';
 
   return (
-    <div className="w-72 bg-white rounded-[28px] border border-[#E6E6E6] shadow-sm overflow-hidden">
-      <div className="px-4 py-4 border-b border-[#E6E6E6]">
-        <p className="text-sm font-semibold text-[#1E1E1E]">Unidades Activas</p>
-        <p className="text-sm text-[#616161]">{totalCount}/{totalCount}</p>
+    <div className="w-72 overflow-hidden rounded-lg border border-[#E6E6E6] bg-white shadow-sm" style={{ border: '1px solid #E6E6E6' }}>
+      <div className="flex items-center justify-between border-b border-[#E6E6E6] px-4 py-3" style={{ borderBottom: '1px solid #E6E6E6' }}>
+        <div>
+          <h3 className="text-sm font-semibold" style={{ color: '#1E1E1E' }}>Unidades Activas</h3>
+          <p className="text-sm font-semibold tabular-nums" style={{ color: '#616161' }}>{totalCount}/{totalCount}</p>
+        </div>
+        <span className="rounded-full bg-[#F3F4F6] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: '#616161' }}>
+          {activeCategory ? 'Activo' : 'Ver'}
+        </span>
       </div>
 
       <CategorySection
@@ -125,18 +130,31 @@ function CategorySection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-[#E6E6E6] last:border-none" style={{ borderBottom: noBorder ? 'none' : undefined }}>
-      <button
-        type="button"
+    <div style={{ borderBottom: noBorder ? 'none' : '1px solid #E6E6E6' }}>
+      <div
         onClick={onClick}
-        className="w-full px-4 py-3 flex items-center gap-2 justify-between text-left hover:bg-[#F7F7F7] transition-colors"
+        className="flex cursor-pointer items-center gap-2 px-4 py-2.5 transition-colors hover:bg-gray-50"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onClick();
+          }
+        }}
       >
-        <span className={`text-sm font-semibold ${active ? 'text-[#1E1E1E]' : 'text-[#616161]'}`}>{title}</span>
-        <span className={`text-xs font-semibold uppercase tracking-[0.18em] ${active ? 'text-[#1E1E1E]' : 'text-[#AFAFAF]'}`}>
-          {active ? 'Activo' : 'Ver'}
+        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border" style={{ borderColor: active ? '#1E1E1E' : '#AFAFAF', backgroundColor: active ? '#1E1E1E' : 'transparent' }}>
+          {active ? (
+            <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          ) : null}
         </span>
-      </button>
-      <div className="px-4 pb-3 space-y-2">
+        <span className="text-sm font-semibold" style={{ color: active ? '#1E1E1E' : '#616161' }}>
+          {title}
+        </span>
+      </div>
+      <div className="space-y-0.5 px-4 pb-2.5">
         {children}
       </div>
     </div>
@@ -155,12 +173,16 @@ function FilterRow({
   active: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 text-sm text-[#616161]">
+    <div className="flex items-center gap-2 px-1 py-0.5">
       {dotColor && (
-        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: active ? dotColor : '#D1D5DB' }} />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: active ? dotColor : '#AFAFAF' }} />
       )}
-      <span className={active ? 'text-[#1E1E1E]' : 'text-[#9CA3AF]' }>{label}</span>
-      <span className="ml-auto font-semibold text-[#616161]">{count}</span>
+      <span className="flex-1 text-sm" style={{ color: active ? '#1E1E1E' : '#AFAFAF' }}>
+        {label}
+      </span>
+      <span className="text-sm font-medium tabular-nums" style={{ color: active ? '#616161' : '#AFAFAF' }}>
+        {count}
+      </span>
     </div>
   );
 }

@@ -6,6 +6,8 @@ interface VehiclePresentationCardProps {
   vehicle: Vehicle;
   variant?: 'map' | 'directory';
   className?: string;
+  isHighlighted?: boolean;
+  cardId?: string;
   onClose?: () => void;
   onViewDetails?: (vehicleId: string) => void;
 }
@@ -14,6 +16,8 @@ export default function VehiclePresentationCard({
   vehicle,
   variant = 'directory',
   className = '',
+  isHighlighted = false,
+  cardId,
   onClose,
   onViewDetails,
 }: VehiclePresentationCardProps) {
@@ -88,7 +92,11 @@ export default function VehiclePresentationCard({
   }
 
   return (
-    <article className={`rounded-[28px] border border-[#E6E6E6] bg-white p-6 shadow-sm ${className}`.trim()}>
+    <article
+      id={cardId}
+      tabIndex={-1}
+      className={`rounded-[28px] border border-[#E6E6E6] bg-white p-6 shadow-sm transition-all duration-200 ${isHighlighted ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20 shadow-[0_0_0_2px_rgba(37,99,235,0.08)]' : ''} ${className}`.trim()}
+    >
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#616161]">{vehicle.label}</p>
